@@ -1,0 +1,342 @@
+openapi: 3.0.0
+info:
+  title: Streaming Management API
+  description: API for streaming management
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/JCASCOSE/StreamingManagement/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /api/streaming/streaming:
+    post:
+      tags:
+      - streaming
+      summary: Live streaming
+      operationId: streaming-start
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Streaming'
+        required: true
+      responses:
+        "201":
+          description: Streaming started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        "401":
+          description: Unauthorized - user not logged in
+        "500":
+          description: Server internal error
+      x-swagger-router-controller: Streaming
+  /api/streaming/streaming/{streamingId}:
+    get:
+      tags:
+      - streaming
+      summary: Receive streaming
+      operationId: streaming-receive
+      parameters:
+      - name: streamingId
+        in: path
+        description: Streaming ID to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      responses:
+        "200":
+          description: Stream received successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Streaming'
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Stream not found
+      x-swagger-router-controller: Streaming
+    put:
+      tags:
+      - streaming
+      summary: Configure streaming
+      operationId: streaming-edit
+      parameters:
+      - name: streamingId
+        in: path
+        description: stream that needs to be updated
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      - name: title
+        in: query
+        description: The title to change
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: New title
+      - name: description
+        in: query
+        description: The description to change
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: New description
+      responses:
+        "200":
+          description: Streaming configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Streaming'
+        "400":
+          description: Error in configuration request
+        "401":
+          description: Unauthorized - user not logged in
+      x-swagger-router-controller: Streaming
+    delete:
+      tags:
+      - streaming
+      summary: Delete streaming
+      operationId: streaming-delete
+      parameters:
+      - name: streamingId
+        in: path
+        description: streaming to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      responses:
+        "204":
+          description: Streaming deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Streaming not found
+      x-swagger-router-controller: Streaming
+  /api/streaming/message:
+    post:
+      tags:
+      - message
+      summary: Send message
+      operationId: streaming-send-message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        "201":
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        "401":
+          description: Unauthorized - user not logged in
+        "422":
+          description: Error in message validation
+      x-swagger-router-controller: Message
+  /api/streaming/message/{messageId}:
+    get:
+      tags:
+      - message
+      summary: Receive message
+      operationId: streaming-receive-message
+      parameters:
+      - name: messageId
+        in: path
+        description: message to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      responses:
+        "200":
+          description: Message received successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Message not found
+      x-swagger-router-controller: Message
+  /api/streaming/streaming/{streamingId}/moderate:
+    post:
+      tags:
+      - streaming
+      summary: Streaming moderation
+      operationId: streaming-moderate
+      parameters:
+      - name: streamingId
+        in: path
+        description: streaming to moderate
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      - name: moderation
+        in: query
+        description: type of moderation
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+        example: 2
+      responses:
+        "200":
+          description: Streaming moderated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Streaming'
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Not authorized access
+      x-swagger-router-controller: Streaming
+  /api/streaming/streaming/{streamingId}/end:
+    post:
+      tags:
+      - streaming
+      summary: End streaming
+      operationId: streaming-end
+      parameters:
+      - name: streamingId
+        in: path
+        description: streaming to end
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 1
+      responses:
+        "204":
+          description: Streaming ended successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Streaming not found
+      x-swagger-router-controller: Streaming
+components:
+  schemas:
+    User:
+      required:
+      - email
+      - password
+      - userId
+      - username
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: frederick62
+        email:
+          type: string
+          format: email
+          example: fred@email.com
+        recoveryEmail:
+          type: string
+          format: email
+          example: rick@email.com
+        password:
+          type: string
+          format: password
+          example: "1234"
+    Streaming:
+      required:
+      - owner
+      - streamingId
+      - title
+      type: object
+      properties:
+        streamingId:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: First stream
+        description:
+          type: string
+          example: Doing my first stream
+        owner:
+          type: string
+          example: "1"
+      example:
+        owner: "{}"
+        streamingId: "1"
+        description: Doing my first stream
+        title: First stream
+    Message:
+      required:
+      - content
+      - emitter
+      - messageId
+      - messageType
+      - receiver
+      type: object
+      properties:
+        messageId:
+          type: string
+          example: "1"
+        messageType:
+          type: integer
+          example: 3
+        content:
+          type: string
+          example: Hello
+        emitter:
+          type: string
+          example: "1"
+        receiver:
+          type: string
+          example: "1"
+      example:
+        messageType: 3
+        receiver: "2"
+        messageId: "1"
+        emitter: "1"
+        content: Hello
+    APIResponse:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          example: Operation returned successfully
+      example:
+        message: Operation returned successfully
