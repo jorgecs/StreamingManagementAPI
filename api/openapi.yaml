@@ -7,6 +7,13 @@ servers:
 - url: https://virtserver.swaggerhub.com/JCASCOSE/StreamingManagement/1.0.0
   description: SwaggerHub API Auto Mocking
 paths:
+  /metrics:
+    get:
+      operationId: metricsGET
+      responses:
+        "200":
+          description: User identification was successful
+      x-swagger-router-controller: Default
   /api/streaming/streaming:
     post:
       tags:
